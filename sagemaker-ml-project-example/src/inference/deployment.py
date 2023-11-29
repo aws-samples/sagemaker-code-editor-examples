@@ -1,6 +1,10 @@
 import json
+import os
 from sagemaker.huggingface import HuggingFaceModel, get_huggingface_llm_image_uri
 import traceback
+
+### SageMaker Defaults configurations ###
+os.environ["SAGEMAKER_USER_CONFIG_OVERRIDE"] = os.path.join(os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../')), "config.yaml")
 
 ### Parameters ###
 model_id = "mistralai/Mistral-7B-Instruct-v0.1"
@@ -18,6 +22,8 @@ def _get_huggingface_image():
             "huggingface",
             version=huggingface_container_version
         )
+
+        return image_uri
     except Exception as e:
         stacktrace = traceback.format_exc()
         print(stacktrace)
@@ -49,7 +55,7 @@ def _deploy(image_uri):
 def main():
     image_uri = _get_huggingface_image()
 
-    _deploy()
+    _deploy(image_uri)
 
 if __name__ == "__main__":
     main()

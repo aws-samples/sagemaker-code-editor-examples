@@ -1,7 +1,7 @@
-import boto3
 from sagemaker.huggingface import HuggingFacePredictor
+import traceback
 
-def predict(endpoint_name, prompt, parameters):
+def predict(endpoint_name, prompt, parameters={}):
     """Make a prediction by using the SageMaker endpoint provided for a test case. Return True if the response contains an array
     with generated_text, False otherwise. Put everithing in a try/except block.
     Parameters:
@@ -16,8 +16,11 @@ def predict(endpoint_name, prompt, parameters):
             response = predictor.predict({"inputs": prompt, "parameters": parameters})
         else:
             response = predictor.predict({"inputs": prompt})
-        if "generated_text" in response[0]:
+        if "generated_text" in response[0].keys():
             return True
         return False
-    except:
+    except Exception as e:
+        stacktrace = traceback.format_exc()
+        print(stacktrace)
+
         return False
